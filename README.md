@@ -53,7 +53,7 @@ After=network.target
 
 [Service]
 ExecStartPre=/bin/sleep 5
-ExecStart=/home/YourUserName/.local/bin/uv run /home/YourUserName/dcc-rail-controller
+ExecStart=/home/YourUserName/.local/bin/uv run /home/YourUserName/dcc-rail-controller/server.py
 WorkingDirectory=/home/YourUserName/dcc-rail-controller
 StandardOutput=inherit
 StandardError=inherit
