@@ -37,4 +37,5 @@ Follow similar steps to add any new private networks for internet access.
 
 ## Web Server Setup
 - Install uv `curl -LsSf https://astral.sh/uv/install.sh | sh`
-- 
+- Install git `sudo apt install git`
+- Clone the project repo
