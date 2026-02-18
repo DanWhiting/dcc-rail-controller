@@ -66,3 +66,6 @@ WantedBy=multi-user.target
 
 `sudo systemctl enable pi-rail.service`
 `sudo systemctl start pi-rail.service`
+
+## ToDo
+- Consider adding nginx as a reverse proxy to simplify connection and improve serving performance
