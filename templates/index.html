@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #222; color: white; }
+        .slider { width: 80%; height: 50px; margin: 20px; }
+        h1 { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <h1>Model Train Throttle</h1>
+    <p>Speed: <span id="speedVal">0</span>%</p>
+    <input type="range" min="0" max="100" value="0" class="slider" id="speedRange">
+
+    <script>
+        var slider = document.getElementById("speedRange");
+        var output = document.getElementById("speedVal");
+
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+            // This tells the Pi to change the motor speed
+            fetch(`/set_speed?speed=${this.value}`);
+        }
+    </script>
+</body>
+</html>

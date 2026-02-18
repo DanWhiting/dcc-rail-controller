@@ -8,7 +8,9 @@ Currently does not support extended decoder addresses.
 The current approach assumes that synchronous communication is always good enough.
 In the future, this could be extended to add async controllers and async dcc device classes.
 
-# Pi Initial Setup
+# Quick Start
+
+## Pi Initial Setup
 - Setup Raspberry OS Lite in headless mode connected to your wifi network
 - System update
 
@@ -36,6 +38,31 @@ Follow similar steps to add any new private networks for internet access.
 - When the Pi is acting as the access point, it should be accessible via its static ip defined above.
 
 ## Web Server Setup
-- Install uv `curl -LsSf https://astral.sh/uv/install.sh | sh`
 - Install git `sudo apt install git`
-- Clone the project repo
+- Clone the project repo `git clone 'https://github.com/DanWhiting/dcc-rail-controller`
+- Install uv `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- Restart the remote shell and cd into the project repo.
+- Run `uv sync`
+
+
+- Create `sudo nano /etc/systemd/system/pi-rail.service`
+```
+[Unit]
+Description=Train Control Web Server
+After=network.target
+
+[Service]
+ExecStartPre=/bin/sleep 5
+ExecStart=/home/YourUserName/.local/bin/uv run /home/YourUserName/dcc-rail-controller
+WorkingDirectory=/home/YourUserName/dcc-rail-controller
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=YourUserName
+
+[Install]
+WantedBy=multi-user.target
+```
+
+`sudo systemctl enable pi-rail.service`
+`sudo systemctl start pi-rail.service`
