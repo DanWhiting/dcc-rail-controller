@@ -67,5 +67,27 @@ WantedBy=multi-user.target
 `sudo systemctl enable pi-rail.service`
 `sudo systemctl start pi-rail.service`
 
+
+### Permenantly redirect port 80 to port 5000
+```
+sudo systemctl enable nftables
+sudo nft add table ip nat
+sudo nft add chain ip nat prerouting { type nat hook prerouting priority 0 \; }
+sudo nft add rule ip nat prerouting tcp dport 80 redirect to :5000
+sudo sh -c "nft list ruleset > /etc/nftables.conf"
+sudo systemctl restart nftables
+```
+
+### Install and configure dnsmasq
+```
+sudo apt install dnsmasq
+sudo nano /etc/dnsmasq.conf
+```
+
+Add the following lines:
+
+
+`sudo systemctl restart dnsmasq`
+
 ## ToDo
 - Consider adding nginx as a reverse proxy to simplify connection and improve serving performance
