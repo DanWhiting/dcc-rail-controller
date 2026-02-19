@@ -17,7 +17,7 @@ def reset_adaptor(adapter: simplepyble.Adapter):
     time.sleep(1)
     adapter.power_on()
 
-def find_peripherals(address = None, identifier = None, service_id = None, scan_duration: int = 1000) -> list[simplepyble.Peripheral]:
+def find_peripherals(address = None, identifier = None, service_id = None, scan_duration: int = 2000) -> list[simplepyble.Peripheral]:
     adapter = get_any_adapter()
     
     adapter.set_callback_on_scan_start(lambda: logging.debug(f"BLE scan started using adaptor: {adapter.identifier()} [{adapter.address()}]."))

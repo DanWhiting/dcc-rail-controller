@@ -4,9 +4,41 @@
     <title>Train Control</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: sans-serif; text-align: center; background: #222; color: white; }
+        body { font-family: sans-serif; text-align: center; background: #222; color: white; padding: 20px; }
         .slider { width: 80%; height: 50px; margin: 20px; }
         h1 { color: #ffcc00; }
+        
+        /* Radio Button Styling */
+        .signal-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .signal-option {
+            display: none; /* Hide the actual radio circle */
+        }
+        .signal-label {
+            padding: 15px 20px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        /* Color-specific styling */
+        .label-green { background-color: #006400; color: white; }
+        .label-red { background-color: #8b0000; color: white; }
+        .label-yellow { background-color: #b8860b; color: black; }
+        .label-two-yellow { background: linear-gradient(45deg, #b8860b 50%, #000 50%); color: white; }
+
+        /* Highlight the selected one */
+        .signal-option:checked + .signal-label {
+            border-color: white;
+            box-shadow: 0 0 15px white;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -14,15 +46,41 @@
     <p>Speed: <span id="speedVal">0</span>%</p>
     <input type="range" min="0" max="100" value="0" class="slider" id="speedRange">
 
-    <script>
-        var slider = document.getElementById("speedRange");
-        var output = document.getElementById("speedVal");
+    <h2>Signal Control</h2>
+    <div class="signal-container">
+        <input type="radio" name="signal" id="green" value="green" class="signal-option" checked>
+        <label for="green" class="signal-label label-green">Green</label>
 
+        <input type="radio" name="signal" id="red" value="red" class="signal-option">
+        <label for="red" class="signal-label label-red">Red</label>
+
+        <input type="radio" name="signal" id="yellow" value="yellow" class="signal-option">
+        <label for="yellow" class="signal-label label-yellow">Yellow</label>
+
+        <input type="radio" name="signal" id="two-yellow" value="two-yellow" class="signal-option">
+        <label for="two-yellow" class="signal-label label-two-yellow">Double Y</label>
+    </div>
+
+    <script>
+        const slider = document.getElementById("speedRange");
+        const output = document.getElementById("speedVal");
+        const radios = document.querySelectorAll('input[name="signal"]');
+
+        // Speed Control
         slider.oninput = function() {
             output.innerHTML = this.value;
-            // This tells the Pi to change the motor speed
             fetch(`/set_speed?speed=${this.value}`);
-        }
+        };
+
+        // Signal Control
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    console.log("Setting signal to:", this.value);
+                    fetch(`/set_signal?type=${this.value}`);
+                }
+            });
+        });
     </script>
 </body>
 </html>
