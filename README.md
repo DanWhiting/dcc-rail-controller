@@ -1,5 +1,10 @@
-# DCC-rail-controller
-A collection of codes for controlling DCC model railway equipment.
+# DCC Rail Controller
+A project for controlling DCC model railway equipment via a web interface hosted on a Raspberry Pi Zero 2W.
+
+The hardware setup consists of:
+1. A simple track power driver PCB based on an LMD18200 3A, 55V H-Bridge.
+2. An ESP32 dev kit, responsible for reliably sending DCC packets via the track power driver.
+3. A Rasberry Pi Zero 2W, responsible for hosting the control web interface and sending packets to the ESP32.
 
 Designed to conform to NMRA S-9.2 and S-9.2.1 standards.
 
@@ -7,6 +12,9 @@ Currently does not support extended decoder addresses.
 
 The current approach assumes that synchronous communication is always good enough.
 In the future, this could be extended to add async controllers and async dcc device classes.
+
+# Status
+Early Development - many features are being changed and added, there is no requirement for or expectation of stability.
 
 # Quick Start
 
@@ -86,8 +94,8 @@ When the phone tries to reach the "Internet" to verify the connection, it hits o
 >Note: For dnsmasq to work correctly, the Wi-Fi connection must be set to Manual mode in NetworkManager. If it is set to "Shared" mode, NetworkManager will try to run its own hidden version of dnsmasq, causing a conflict and preventing yours from starting.
 
 1. Install dnsmasq `sudo apt install dnsmasq`
-
-2. Add the following lines to `sudo nano /etc/dnsmasq.conf`:
+2. Enable the service `sudo systemctl enable dnsmasq`
+3. Add the following lines to `sudo nano /etc/dnsmasq.conf`:
 ```
 # The "Liar" DNS rule
 address=/#/192.168.4.1
@@ -102,13 +110,9 @@ dhcp-option=option:dns-server,192.168.4.1
 
 interface=wlan0
 bind-dynamic
+no-resolv
 ```
-
-3. Enable and start/restart the service
-```
-sudo systemctl enable dnsmasq
-sudo systemctl restart dnsmasq
-```
+4. Restart the service `sudo systemctl restart dnsmasq`
 
 ### Testing
 - Switch over to the hotspot network `sudo nmcli con up PiRailHotspot`
