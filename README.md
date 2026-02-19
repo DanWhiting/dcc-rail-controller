@@ -23,11 +23,11 @@ Follow similar steps to add any new private networks for internet access.
     - SSID: PiRailControl
     - Mode: Access Point
     - Security: WPA & WPA2 Personal, Password: YourPassword
-    - IPv4 configuration: Shared
-    - Connect automatically
+    - IPv4 configuration: Manual
+        - Add an address: 192.168.4.1/24
+    - Enable "Automatically connect"
 - Edit the existing config for the original wifi network to remove the autoconnect option and exit the config tool.
 
-- Set a static IP for the hotspot `sudo nmcli con modify PiRailHotspot ipv4.addresses 192.168.4.1/24`
 - Switch over to the hotspot network `sudo nmcli con up PiRailHotspot`
 
 ### Switching Networks
@@ -78,14 +78,28 @@ sudo sh -c "nft list ruleset > /etc/nftables.conf"
 sudo systemctl restart nftables
 ```
 
-### Install and configure dnsmasq
+### Install and configure dnsmasq to setup the capture/login prompt
 ```
 sudo apt install dnsmasq
 sudo nano /etc/dnsmasq.conf
 ```
 
 Add the following lines:
+```
+# The "Liar" DNS rule
+address=/#/192.168.4.1
 
+# DHCP Server settings
+# This hands out IPs from .50 to .150
+dhcp-range=192.168.4.50,192.168.4.150,12h
+
+# Tell the client that the Pi is the Gateway and the DNS server
+dhcp-option=option:router,192.168.4.1
+dhcp-option=option:dns-server,192.168.4.1
+
+interface=wlan0
+bind-dynamic
+```
 
 `sudo systemctl restart dnsmasq`
 
