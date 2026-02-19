@@ -1,17 +1,20 @@
 from flask import Flask, jsonify, render_template, request
-import ble_comms
-from dcc import Accessory
+# import ble_comms
+# from dcc import Accessory
+
+print("Starting server...")
 
 app = Flask(__name__)
 
-class State:
-    def __init__(self):
-        self.controller = ble_comms.get_connected_ble_device()
-        self.signal = Accessory(self.controller, 42, ["green", "red", "yellow", "two-yellow"])
+# class State:
+#     def __init__(self):
+#         self.controller = ble_comms.get_connected_ble_device()
+#         print("Connected")
+#         self.signal = Accessory(self.controller, 42, ["green", "red", "yellow", "two-yellow"])
 
-state = None
-if state is None:
-    state = State()
+# state = None
+# if state is None:
+#     state = State()
 
 # Current state
 current_signal = "green"
@@ -28,19 +31,19 @@ def set_speed():
 def catch_all(path):
     return render_template('index.html')
 
-@app.route('/set_signal')
-def set_signal():
-    global current_signal
-    # Get the signal name from the URL (?type=red)
-    new_signal = request.args.get('type', 'green')
+# @app.route('/set_signal')
+# def set_signal():
+#     global current_signal
+#     # Get the signal name from the URL (?type=red)
+#     new_signal = request.args.get('type', 'green')
     
-    state.signal.setState(new_signal)
+#     state.signal.setState(new_signal)
 
-    current_signal = new_signal
-    print(f"Signal changed to: {current_signal}")
+#     current_signal = new_signal
+#     print(f"Signal changed to: {current_signal}")
     
-    # Return confirmation
-    return jsonify({"status": "success", "current_signal": current_signal})
+#     # Return confirmation
+#     return jsonify({"status": "success", "current_signal": current_signal})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
