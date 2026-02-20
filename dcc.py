@@ -108,8 +108,8 @@ def stopAll(controller: AbstractController):
     controller.write(bytes([0x00, 0x70, 0x70]))
 
 if __name__ == "__main__":
-    import ble_comms
-    controller = ble_comms.get_connected_ble_device()
+    import serial_comms
+    controller = serial_comms.get_connected_serial_device()
     try:
         signal = Accessory(controller, 42, ["green", "red", "yellow", "two yellow"])
         signal.test()

@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "flask>=3.1.2",
-    "pyopenssl>=25.3.0",
+    "pyserial>=3.5",
     "simplepyble>=0.12.1",
 ]

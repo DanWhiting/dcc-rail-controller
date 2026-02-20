@@ -17,16 +17,21 @@ In the future, this could be extended to add async controllers and async dcc dev
 Early Development - many features are being changed and added, there is no requirement for or expectation of stability.
 
 # Quick Start
+This quick start guide has only been tested with a Rasberry Pi Zero 2W running Raspberry Pi OS Lite (Debian Trixie).
 
 ## Pi Initial Setup
-- Setup Raspberry OS Lite in headless mode connected to your wifi network
-- System update
+- Setup Raspberry OS Lite in headless mode connected to a local wifi network.
+- System update:
+```
+sudo apt update
+sudo apt upgrade
+```
 
 ## Network Setup
 Follow these steps to set up the pi with a local hotspot which will be the default wifi mode on boot.
 Follow similar steps to add any other new private networks for internet access but ensure that they are not set to connect automatically.
 
-1. Create a new network config using `sudo nmtui`:
+1. Create a new wifi network config using `sudo nmtui`:
     - Name: PiRailHotspot
     - SSID: PiRailControl
     - Mode: Access Point
@@ -38,14 +43,27 @@ Follow similar steps to add any other new private networks for internet access b
 
 ### Switching Networks
 - Switch between networks using `sudo nmcli con up NetworkName`
+- For now, leave the external wifi connection active.
 
 ### Remote SSH to the Pi
 - When the Pi is on the local wifi network, it should be accessible via its hostname e.g. pi-rail.
 - When the Pi is acting as the access point (hotspot), it should be accessible via its static ip that we defined above.
 
+## Enabling Bluetooth
+I went through several steps to get bluetooth working, I will list them all here but i'm not certain which are the minimum actually required.
+
+1. `sudo apt install libdbus-1-dev libbluetooth-dev bluez bluetooth`
+
+2. Adding the user to the bluetooth group: `sudo usermod -aG bluetooth YourUserName`
+
+3. For some reason bluetooth was soft-blocked on my system, see output of `rfkill list`.
+This could be as a result of unset localisation options which can be set in the Pi config `sudo raspi-config`.
+I ensured these were set correctly and then manually ran `sudo rfkill unblock bluetooth` to clear the block.
+After restarting the system, the bluetooth service started correctly.
+
 ## Web Server Setup
 1. Install git `sudo apt install git`
-2. Clone the project repo `git clone 'https://github.com/DanWhiting/dcc-rail-controller`
+2. Clone the project repo `git clone 'https://github.com/DanWhiting/dcc-rail-controller'`
 3. Install uv `curl -LsSf https://astral.sh/uv/install.sh | sh`
 4. Restart the remote shell (to update the path) and cd into the project repo.
 5. Run `uv sync`
@@ -53,7 +71,10 @@ Follow similar steps to add any other new private networks for internet access b
 ```
 [Unit]
 Description=Train Control Web Server
-After=network.target
+After=network-online.target NetworkManager.service
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=3
 
 [Service]
 ExecStartPre=/bin/sleep 5
@@ -61,8 +82,10 @@ ExecStart=/home/YourUserName/.local/bin/uv run /home/YourUserName/dcc-rail-contr
 WorkingDirectory=/home/YourUserName/dcc-rail-controller
 StandardOutput=inherit
 StandardError=inherit
-Restart=always
 User=YourUserName
+# Currently Restart=no but will change to always later when stable
+Restart=no 
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
