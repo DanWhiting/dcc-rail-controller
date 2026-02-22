@@ -5,6 +5,7 @@ The hardware setup consists of:
 1. A simple track power driver PCB based on an LMD18200 3A, 55V H-Bridge.
 2. An ESP32 dev kit, responsible for reliably sending DCC packets via the track power driver.
 3. A Rasberry Pi Zero 2W, responsible for hosting the control web interface and sending packets to the ESP32.
+4. A micro-B USB OTG cable for serial comms between the Pi and the ESP32.
 
 Designed to conform to NMRA S-9.2 and S-9.2.1 standards.
 
@@ -48,18 +49,6 @@ Follow similar steps to add any other new private networks for internet access b
 ### Remote SSH to the Pi
 - When the Pi is on the local wifi network, it should be accessible via its hostname e.g. pi-rail.
 - When the Pi is acting as the access point (hotspot), it should be accessible via its static ip that we defined above.
-
-## Enabling Bluetooth
-I went through several steps to get bluetooth working, I will list them all here but i'm not certain which are the minimum actually required.
-
-1. `sudo apt install libdbus-1-dev libbluetooth-dev bluez bluetooth`
-
-2. Adding the user to the bluetooth group: `sudo usermod -aG bluetooth YourUserName`
-
-3. For some reason bluetooth was soft-blocked on my system, see output of `rfkill list`.
-This could be as a result of unset localisation options which can be set in the Pi config `sudo raspi-config`.
-I ensured these were set correctly and then manually ran `sudo rfkill unblock bluetooth` to clear the block.
-After restarting the system, the bluetooth service started correctly.
 
 ## Web Server Setup
 1. Install git `sudo apt install git`
@@ -144,3 +133,16 @@ no-resolv
 
 ## ToDo
 - Consider adding nginx as a reverse proxy to simplify connection and improve serving performance
+
+
+## Enabling Bluetooth (not required unless using untested bluetooth comms)
+I went through several steps to get bluetooth working, I will list them all here but i'm not certain which are the minimum actually required.
+
+1. `sudo apt install libdbus-1-dev libbluetooth-dev bluez bluetooth`
+
+2. Adding the user to the bluetooth group: `sudo usermod -aG bluetooth YourUserName`
+
+3. For some reason bluetooth was soft-blocked on my system, see output of `rfkill list`.
+This could be as a result of unset localisation options which can be set in the Pi config `sudo raspi-config`.
+I ensured these were set correctly and then manually ran `sudo rfkill unblock bluetooth` to clear the block.
+After restarting the system, the bluetooth service started correctly.
